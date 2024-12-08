@@ -1,6 +1,17 @@
-all: bin/p1
+SRC=$(shell find src -type f | grep \.ml)
 
-.PHONY: test
+all: aoc
 
-bin/%: src/%.ml
-	ocamlc $^ -o $@
+.PHONY: test clean
+
+aoc: $(SRC)
+	rm -f $@
+	dune build
+	ln -s ./_build/default/src/main.exe $@
+
+clean:
+	dune clean
+	rm -f aoc
+
+test:
+	@echo "TODO" >&2
