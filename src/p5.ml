@@ -3,6 +3,10 @@
  *  https://adventofcode.com/2024/day/5
  *)
 
+type 'a tuple = 
+  | One of 'a 
+  | Two of 'a * 'a
+
 type rules = (int * int) list
 type updates = int list list
 type rules_and_updates = rules * updates

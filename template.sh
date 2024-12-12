@@ -10,12 +10,12 @@ cat > $file <<EOF
  *  https://adventofcode.com/2024/day/${n}
  *)
 
-let part_one (l: string list): int =
-  assert (List.length l >= 0); 0 (* DELETE ME *)
+let part_one (_: string list): int =
+  0 (* DELETE ME *)
 ;;
 
-let part_two (l: string list): int =
-  assert (List.length l >= 0); 0 (* DELETE ME *)
+let part_two (_: string list): int =
+  0 (* DELETE ME *)
 ;;
 
 let parse_file (file_content: string): string list =

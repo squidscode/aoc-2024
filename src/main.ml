@@ -7,6 +7,7 @@ let () =
     begin match (Array.get Sys.argv 1) with 
     (*  Add run options here  *)
     (*  TODO: is there a way to avoid P# duplication? Maybe a macro? *)
+    (*  https://ocaml-ppx.github.io/ppxlib/ppxlib/index.html  *)
     | "1.1" -> s |> P1.parse_file |> P1.part_one
     | "1.2" -> s |> P1.parse_file |> P1.part_two
 
@@ -21,6 +22,12 @@ let () =
 
     | "5.1" -> s |> P5.parse_file |> P5.part_one
     | "5.2" -> s |> P5.parse_file |> P5.part_two
+
+    | "6.1" -> s |> P6.parse_file |> P6.part_one
+    | "6.2" -> s |> P6.parse_file |> P6.part_two
+
+    | "7.1" -> s |> P7.parse_file |> P7.part_one
+    | "7.2" -> s |> P7.parse_file |> P7.part_two
 
     | _ -> raise (ArgumentError "Bad first argument")
     end |> Format.printf "answer: %d\n"
