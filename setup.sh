@@ -27,3 +27,13 @@ let parse_file (file_content: string): string list =
   *)
 ;;
 EOF
+
+main="./src/main.ml"
+search_str="    \(\* TEMPLATE.SH WILL INSERT HERE \*\)"
+prepend="    | \"${n}.1\" -> s |> P${n}.parse_file |> P${n}.part_one\n    | \"${n}.2\" -> s |> P${n}.parse_file |> P${n}.part_two\n\n    (* TEMPLATE.SH WILL INSERT HERE *)"
+
+perl -pi -e "s#${search_str}#${prepend}#g" "${main}"
+
+./get_input.py "${n}" -o "./resources/${n}.txt"
+
+dune fmt
