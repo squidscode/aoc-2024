@@ -48,6 +48,18 @@ let () =
       | "18.2" -> s |> P18.parse_file |> P18.part_two
       | "19.1" -> s |> P19.parse_file |> P19.part_one
       | "19.2" -> s |> P19.parse_file |> P19.part_two
+      | "20.1" -> s |> P20.parse_file |> P20.part_one
+      | "20.2" -> s |> P20.parse_file |> P20.part_two
+      | "21.1" -> s |> P21.parse_file |> P21.part_one
+      | "21.2" -> s |> P21.parse_file |> P21.part_two
+      | "22.1" -> s |> P22.parse_file |> P22.part_one
+      | "22.2" -> s |> P22.parse_file |> P22.part_two
+      | "23.1" -> s |> P23.parse_file |> P23.part_one
+      | "23.2" -> s |> P23.parse_file |> P23.part_two
+      | "24.1" -> s |> P24.parse_file |> P24.part_one
+      | "24.2" -> s |> P24.parse_file |> P24.part_two
+      | "25.1" -> s |> P25.parse_file |> P25.part_one
+      | "25.2" -> s |> P25.parse_file |> P25.part_two
       (* TEMPLATE.SH WILL INSERT HERE *)
       | _ -> raise (ArgumentError "Bad first argument"))
       |> Format.printf "answer: %d\n"

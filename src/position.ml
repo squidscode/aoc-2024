@@ -14,6 +14,12 @@ module Iposition = struct
   let compare { x = x1; y = y1 } { x = x2; y = y2 } : int =
     let xc = Int.compare x1 x2 in
     if xc != 0 then xc else Int.compare y1 y2
+
+  let equal (p1 : t) (p2 : t) : bool =
+    p1 = p2
+
+  let hash ({x;y} : t) : int =
+    101 * x + y
 end
 
 type position = Iposition.t
@@ -44,6 +50,14 @@ let padd (p1 : position) (p2 : position) : position =
 let padj (p1 : position) (p2 : position) : bool =
   let d = pdiff p1 p2 in
   (d.x * d.x) + (d.y * d.y) = 1
+
+let get_adjs (p : position) : position list =
+  [
+    {x=p.x + 1 ; y=p.y};
+    {x=p.x - 1 ; y=p.y};
+    {x=p.x ; y=p.y + 1};
+    {x=p.x ; y=p.y - 1}
+  ]
 
 let psprint (pset : position_set) : unit =
   pset |> PositionSet.iter (fun p -> printf "(%d, %d); " p.x p.y)
