@@ -164,6 +164,28 @@ let part_two (pm : Position.pmap) : int =
         )
   in
 
+  let _process_cheats_v2 (pos : Position.position) : adjmatch list =
+    (* y - nskips -> y + nskips *)
+    List.init (2*nskips + 1) (fun i -> i - nskips)
+      |> List.map (fun ydiff -> 
+        let y = pos.y + ydiff in
+        let yabs = Int.abs ydiff in
+        let xlen = nskips - yabs in
+        List.init (2*xlen + 1) (fun i -> i - xlen)
+        |> List.map (fun xdiff -> 
+          let x = pos.x + xdiff in
+          let xabs = Int.abs xdiff in
+          if Positiontbl.mem distances {x;y} then
+            ((yabs + xabs, {x;y}) : adjmatch) |> Option.some
+          else
+            None
+        )
+        |> List.filter_map Fun.id
+      )
+      |> List.flatten
+  in
+
+
   let rec _process_cheats ?(step : int = 0) (alen : int) (pos : Position.position)
     : adjmatch list =
     let cache_result = _pc_hit pc_tbl (step, pos) in
@@ -190,15 +212,15 @@ let part_two (pm : Position.pmap) : int =
     end
   in
 
-  let n = Positiontbl.length distances in
+  let _n = Positiontbl.length distances in
   distances
     |> Positiontbl.to_seq_keys
     |> List.of_seq
-    |> List.mapi (fun i (p : Position.position) -> 
-        Format.printf "%d / %d ; (%d,%d) cache size: %d\n" (i+1) n 
+    |> List.mapi (fun _i (p : Position.position) -> 
+        Format.printf "%d / %d ; (%d,%d) cache size: %d\n" (_i+1) _n 
           p.x p.y (Adjmatchtbl.length pc_tbl);
         Format.print_flush ();
-        _process_cheats nskips p 
+        _process_cheats_v2 p 
         |> List.map (fun (dist, pto) -> 
           (
             Positiontbl.find distances p - (Positiontbl.find distances pto + dist), 
@@ -213,10 +235,12 @@ let part_two (pm : Position.pmap) : int =
           Position.Iposition.compare pf1 pf2 
         else Position.Iposition.compare pt1 pt2
     )
+    (*
     |> List.map (fun ((i, d, { x=fx ; y=fy }, { x=tx ; y=ty }) as p : cheat') -> 
         Format.printf "(%d, %d, (%d,%d) => (%d,%d))\n" i d fx fy tx ty;
         p
       )
+    *)
     |> List.filter (fun (i, _, _, _) -> 100 <= i)
     |> List.length
 

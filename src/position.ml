@@ -1,10 +1,10 @@
 (** A library for creating and manipulating grids.
-
-    Use `get_grid` to create a `grid`, which maps characters to a set of
-    positions. Any functions that manipulate positions should be added to this
-    file.
-
-    **)
+  *
+  * Use `get_grid` to create a `grid`, which maps characters to a set of
+  * positions. Any functions that manipulate positions should be added to this
+  * file.
+  *
+  **)
 
 open Format
 
@@ -128,6 +128,14 @@ let print_pmap_wh ?(default = '.') (width : int) (height : int) (pmap : pmap) :
                   (pmap |> PositionMap.find_opt p |> Option.value ~default));
          Format.printf "\n")
 
+
+let find_position (mp : pmap) (c : char) : position option =
+  mp
+  |> PositionMap.to_seq
+  |> Seq.filter (fun (_, c') -> c' = c)
+  |> Seq.uncons
+  |> Fun.flip Option.bind (fun ((p, _), _) -> p |> Option.some)
+
 let print_pmap ?(default = '.') (pmap : pmap) : unit =
   let all_positions : position Seq.t =
     pmap |> PositionMap.to_seq |> Seq.map (fun (p, _) -> p)
@@ -143,6 +151,38 @@ let print_pmap ?(default = '.') (pmap : pmap) : unit =
     |> Seq.fold_left max 0 |> ( + ) 1
   in
   print_pmap_wh ~default width height pmap
+
+module Iposdist = struct
+  type t = position * int
+  let compare ((p1, d1) : t) ((p2, d2) : t) : int =
+    if d1 <> d2 then d1 - d2 else Iposition.compare p1 p2
+end
+module PositionDistanceSet = Set.Make (Iposdist)
+type position_distance_set = PositionDistanceSet.t
+
+let rec dijkstras ?(seen : int PositionMap.t = PositionMap.empty) 
+  (width : int) (height : int) (obstacles : position_set) (hp : position_distance_set) 
+  : int PositionMap.t =
+  if PositionDistanceSet.cardinal hp = 0 then
+    seen
+  else
+    let ((nxtp, nxtd) as p) = hp |> PositionDistanceSet.min_elt in
+    let hp = PositionDistanceSet.remove p hp in
+    if PositionMap.mem nxtp seen then
+      dijkstras ~seen width height obstacles hp
+    else
+      let seen = PositionMap.add nxtp nxtd seen in
+      let valid_adjs : Iposdist.t Seq.t = nxtp 
+        |> get_adjs 
+        |> List.filter (fun ({x;y} : position) ->  0<=x && x<width && 0<=y && y<height)
+        |> List.filter (Fun.negate @@ Fun.flip PositionSet.mem obstacles)
+        |> List.filter (Fun.negate @@ Fun.flip PositionMap.mem seen)
+        |> List.map (fun p -> (p, nxtd + 1))
+        |> List.to_seq
+      in
+      let hp = hp |> PositionDistanceSet.add_seq valid_adjs in
+      dijkstras ~seen width height obstacles hp
+
 
 let get_pmap (lines : string list) : pmap =
   lines
